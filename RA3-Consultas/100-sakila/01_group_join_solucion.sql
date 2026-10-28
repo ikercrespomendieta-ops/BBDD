@@ -41,15 +41,41 @@ having avg(length) > 110;
 
 -- 5:  Para cada película, muestra cuántas copias hay en el inventario.
 -- inventory -> film
-select film.title, film_id 
+select film.title, film_id, count(film.title) as num_copias
 from inventory
 	join film using(film_id)
-having count(film_id);
+group by film_id;
 
 -- 6:  Lista solo las películas que tienen al menos 5 copias en inventario.
+select film.title, film_id, count(film.title) as num_copias
+from inventory
+	join film using(film_id)
+group by film_id
+having count(film.title) >=5;
+
 -- 7:  Para cada artículo de inventario, cuenta cuántos alquileres se han realizado.
+-- inventory -> rental
+select inventory_id, count(inventory_id) as num_alquileres
+from inventory
+	join rental using(inventory_id)
+group by inventory_id;
+
 -- 8:  Para cada cliente, muestra cuántos alquileres ha realizado en total.
+-- rental -> customer
+select customer_id, first_name, last_name, count(customer_id) as num_alquileres_realizados
+from rental
+	join customer using(customer_id)
+group by customer_id;
+
+
 -- 9:  Lista los clientes con 30 o más alquileres acumulados.
+-- rental -> customer
+select customer_id, first_name, last_name, count(customer_id) as num_alquileres_realizados
+from rental
+	join customer using(customer_id)
+group by customer_id
+having count(customer_id) > 30;
+
 -- 10:  Para cada cliente, muestra el total de pagos (suma en euros/dólares) que ha realizado.
 -- 11:  Muestra los clientes cuyo importe total pagado es al menos 200.
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
