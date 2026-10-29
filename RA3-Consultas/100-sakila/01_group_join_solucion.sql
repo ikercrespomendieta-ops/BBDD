@@ -96,18 +96,40 @@ having sum(payment.amount) >= 200;
 
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
 -- staff -> payment
-select staff_id, concat(first_name, ' ',last_name), count(rental_id)
+select staff_id, concat(first_name, ' ',last_name) as nombre, count(rental_id)
 from staff
 	join payment using(staff_id)
 group by staff_id
 having count(rental_id);
 
 -- 13:  Para cada empleado, muestra el importe total procesado.
-
-
+-- staf -> payment 
+select staff_id, concat(first_name, ' ',last_name) as nombre, sum(payment.amount)
+from staff
+	join payment using(staff_id)
+group by staff_id
+having sum(payment.amount);
 -- 14:  Para cada tienda, cuenta cuántos artículos de inventario tiene.
+-- store -> inventory
+select store_id, count(inventory.inventory_id)
+from store
+	join inventory using(store_id)
+group by store_id;
+
 -- 15:  Para cada tienda, cuenta cuántos clientes tiene asignados.
+-- store -> customer
+select store_id, count(customer.customer_id)
+from store
+	join customer using(store_id)
+group by store_id;
+
 -- 16:  Para cada tienda, cuenta cuántos empleados (staff) tiene asignados.
+-- store -> staff 
+select store_id,staff_id,concat (first_name,' ',last_name) as nombre
+from store
+	join staff using(store_id);
+    
+
 -- 17:  Para cada dirección (address), cuenta cuántas tiendas hay ubicadas ahí (debería ser 0/1 en datos estándar).
 -- 18:  Para cada dirección, cuenta cuántos empleados residen en esa dirección.
 -- 19:  Para cada dirección, cuenta cuántos clientes residen ahí.
