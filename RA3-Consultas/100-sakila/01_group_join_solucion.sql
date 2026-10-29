@@ -131,11 +131,48 @@ from store
     
 
 -- 17:  Para cada dirección (address), cuenta cuántas tiendas hay ubicadas ahí (debería ser 0/1 en datos estándar).
+-- address -> store
+select address_id,address,count(store_id)
+from address
+	join store using(address_id)
+group by address_id;
+
 -- 18:  Para cada dirección, cuenta cuántos empleados residen en esa dirección.
+-- address -> staff
+select address_id,address,count(staff_id)
+from address
+	join staff using(address_id)
+group by address_id;
+
 -- 19:  Para cada dirección, cuenta cuántos clientes residen ahí.
+-- address -> customer
+select address_id,address,count(customer_id)
+from address
+	join customer using(address_id)
+group by address_id;
+
 -- 20:  Para cada ciudad, cuenta cuántas direcciones hay registradas.
+-- address -> city
+select count(address_id),city.city_id,city
+from address
+	join city using(city_id)
+group by city_id;
+
 -- 21:  Para cada país, cuenta cuántas ciudades existen.
+-- city -> country
+select country.country_id,country,count(city_id)
+from city
+	join country using(country_id)
+group by country.country_id;
+
 -- 22:  Para cada idioma, calcula la duración media de películas y muestra solo los idiomas con media entre 90 y 120 inclusive.
+-- language -> film
+select language_id,name, avg(film.length)
+from language
+	join film using(language_id)
+group by language_id
+having avg(film.length) between 90 and 120;
+
 -- 23:  Para cada película, cuenta el número de alquileres que se han hecho de cualquiera de sus copias (usando inventario).
 -- 24:  Para cada cliente, cuenta cuántos pagos ha realizado en 2005 (usando el año de payment_date).
 -- 25:  Para cada película, muestra el promedio de tarifa de alquiler (rental_rate) de las copias existentes (es un promedio redundante pero válido).
