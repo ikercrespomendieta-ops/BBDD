@@ -77,9 +77,34 @@ group by customer_id
 having count(customer_id) > 30;
 
 -- 10:  Para cada cliente, muestra el total de pagos (suma en euros/dólares) que ha realizado.
+-- customer -> rental
+select customer.customer_id, concat(first_name, ' ', last_name) as nombre, sum(payment.amount)
+from customer
+	join rental using(customer_id)
+    join payment using(rental_id)
+group by customer_id
+having sum(payment.amount);
+
 -- 11:  Muestra los clientes cuyo importe total pagado es al menos 200.
+-- customer -> rental
+select customer.customer_id, concat(first_name, ' ', last_name) as nombre, sum(payment.amount)
+from customer
+	join rental using(customer_id)
+    join payment using(rental_id)
+group by customer_id
+having sum(payment.amount) >= 200;
+
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
+-- staff -> payment
+select staff_id, concat(first_name, ' ',last_name), count(rental_id)
+from staff
+	join payment using(staff_id)
+group by staff_id
+having count(rental_id);
+
 -- 13:  Para cada empleado, muestra el importe total procesado.
+
+
 -- 14:  Para cada tienda, cuenta cuántos artículos de inventario tiene.
 -- 15:  Para cada tienda, cuenta cuántos clientes tiene asignados.
 -- 16:  Para cada tienda, cuenta cuántos empleados (staff) tiene asignados.
