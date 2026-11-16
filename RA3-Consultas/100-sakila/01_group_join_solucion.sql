@@ -275,11 +275,47 @@ JOIN staff st USING (address_id)
 GROUP BY ci.city_id;
 
 -- 37:  Para cada ciudad, cuenta cuántas tiendas existen (store -> address -> city).
+SELECT ci.city_id, ci.city, COUNT(s.store_id) AS total_tiendas
+FROM city ci
+JOIN address a USING (city_id)
+JOIN store s USING (address_id)
+GROUP BY ci.city_id;
+
 -- 38:  Para cada actor, calcula la duración media de sus películas del año 2006.
+SELECT a.actor_id, a.first_name, a.last_name, AVG(f.length) AS duracion_media
+FROM actor a
+JOIN film_actor fa USING (actor_id)
+JOIN film f USING (film_id)
+WHERE f.release_year = 2006
+GROUP BY a.actor_id;
+
 -- 39:  Para cada categoría, calcula la duración media y muestra solo las que superan 120.
+SELECT c.category_id, c.name, AVG(f.length) AS duracion_media
+FROM category c
+JOIN film_category fc USING (category_id)
+JOIN film f USING (film_id)
+GROUP BY c.category_id, c.name
+HAVING AVG(f.length) > 120;
+
 -- 40:  Para cada idioma, suma las tarifas de alquiler (rental_rate) de todas sus películas.
+SELECT l.language_id, l.name, SUM(f.rental_rate) AS suma_rental_rate
+FROM language l
+JOIN film f USING (language_id)
+GROUP BY l.language_id, l.name;
+
 -- 41:  Para cada cliente, cuenta cuántos alquileres realizó en fines de semana (SÁB-DO) usando DAYOFWEEK (1=Domingo).
+SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS alquileres_fin_de_semana
+FROM customer c
+JOIN rental r USING (customer_id)
+WHERE DAYOFWEEK(r.rental_date) IN (1, 7)
+GROUP BY c.customer_id;
+
 -- 42:  Para cada actor, muestra el total de títulos distintos en los que participa (equivale a COUNT DISTINCT, sin subconsulta).
+SELECT a.actor_id, a.first_name, a.last_name, COUNT(fa.film_id) AS total_titulos
+FROM actor a
+JOIN film_actor fa USING (actor_id)
+GROUP BY a.actor_id;
+
 -- 43:  Para cada ciudad, cuenta cuántos clientes residen ahí (customer -> address -> city).
 -- 44:  Para cada categoría, muestra cuántos actores distintos participan en películas de esa categoría.
 -- 45:  Para cada tienda, cuenta cuántas copias totales (inventario) tiene de películas en 2006.
