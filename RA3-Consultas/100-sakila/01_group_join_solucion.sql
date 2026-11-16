@@ -174,13 +174,59 @@ group by language_id
 having avg(film.length) between 90 and 120;
 
 -- 23:  Para cada película, cuenta el número de alquileres que se han hecho de cualquiera de sus copias (usando inventario).
+-- inventory -> film
+select film.film_id,film.title,count(rental_id)
+from film  
+		join inventory  using(film_id)
+		join rental  using(inventory_id)
+group by film.film_id
+having count(rental_id);
+
 -- 24:  Para cada cliente, cuenta cuántos pagos ha realizado en 2005 (usando el año de payment_date).
+SELECT customer_id,CONCAT(first_name,' ',last_name), COUNT(*)
+FROM customer
+JOIN payment USING(customer_id)
+WHERE YEAR(payment_date) = 2005
+GROUP BY customer_id;
 -- 25:  Para cada película, muestra el promedio de tarifa de alquiler (rental_rate) de las copias existentes (es un promedio redundante pero válido).
+SELECT f.film_id, f.title, AVG(f.rental_rate) AS promedio
+FROM film f
+JOIN inventory i USING (film_id)
+GROUP BY f.film_id;
+
+
 -- 26:  Para cada actor, muestra la duración media (length) de sus películas.
+SELECT a.actor_id, a.first_name, a.last_name, AVG(f.length) AS duracion_media
+FROM actor a
+JOIN film_actor fa USING (actor_id)
+JOIN film f USING (film_id)
+GROUP BY a.actor_id;
+
 -- 27:  Para cada ciudad, cuenta cuántos clientes hay (usando la relación cliente->address->city requiere 3 tablas; aquí contamos direcciones por ciudad).
+SELECT ci.city_id, ci.city, COUNT(c.customer_id) AS total_clientes
+FROM city ci
+JOIN address a USING (city_id)
+JOIN customer c USING (address_id)
+GROUP BY ci.city_id;
+
 -- 28:  Para cada película, cuenta cuántos actores tiene asociados.
+SELECT f.film_id, f.title, COUNT(fa.actor_id) AS total_actores
+FROM film f
+JOIN film_actor fa USING (film_id)
+GROUP BY f.film_id;
+
 -- 29:  Para cada categoría (por id), cuenta cuántas películas pertenecen a ella (sin nombre de categoría para mantener 2 tablas).
+SELECT category_id, COUNT(film_id) AS total_peliculas
+FROM film_category
+GROUP BY category_id;
+
 -- 30:  Para cada tienda, cuenta cuántos alquileres totales se originan en su inventario.
+SELECT s.store_id, COUNT(r.rental_id) AS total_alquileres
+FROM store s
+JOIN inventory i USING (store_id)
+JOIN rental r USING (inventory_id)
+GROUP BY s.store_id;
+
 -- ==============================================
 -- SECCIÓN B) 30 CONSULTAS CON JOIN DE 3 TABLAS
 -- ==============================================
