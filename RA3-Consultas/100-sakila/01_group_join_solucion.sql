@@ -317,11 +317,50 @@ JOIN film_actor fa USING (actor_id)
 GROUP BY a.actor_id;
 
 -- 43:  Para cada ciudad, cuenta cuántos clientes residen ahí (customer -> address -> city).
+SELECT ci.city_id, ci.city, COUNT(c.customer_id) AS total_clientes
+FROM city ci
+JOIN address a USING (city_id)
+JOIN customer c USING (address_id)
+GROUP BY ci.city_id;
+
 -- 44:  Para cada categoría, muestra cuántos actores distintos participan en películas de esa categoría.
+SELECT c.category_id, c.name, COUNT(DISTINCT fa.actor_id) AS total_actores
+FROM category c
+JOIN film_category fc USING (category_id)
+JOIN film_actor fa USING (film_id)
+GROUP BY c.category_id;
+
 -- 45:  Para cada tienda, cuenta cuántas copias totales (inventario) tiene de películas en 2006.
+SELECT s.store_id, COUNT(i.inventory_id) AS total_copias
+FROM store s
+JOIN inventory i USING (store_id)
+JOIN film f USING (film_id)
+WHERE f.release_year = 2006
+GROUP BY s.store_id;
+
 -- 46:  Para cada cliente, suma el total pagado por alquileres cuyo empleado pertenece a la tienda 1.
+SELECT c.customer_id, c.first_name, c.last_name, SUM(p.amount) AS total_pagado
+FROM customer c
+JOIN payment p USING (customer_id)
+JOIN staff st USING (staff_id)
+WHERE st.store_id = 1
+GROUP BY c.customer_id;
+
 -- 47:  Para cada película, cuenta cuántos actores tienen el apellido de longitud >= 5.
+SELECT f.film_id, f.title, COUNT(a.actor_id) AS total_actores
+FROM film f
+JOIN film_actor fa USING (film_id)
+JOIN actor a USING (actor_id)
+WHERE CHAR_LENGTH(a.last_name) >= 5
+GROUP BY f.film_id;
+
 -- 48:  Para cada categoría, suma la duración total (length) de sus películas.
+SELECT c.category_id, c.name, SUM(f.length) AS duracion_total
+FROM category c
+JOIN film_category fc USING (category_id)
+JOIN film f USING (film_id)
+GROUP BY c.category_id;
+
 -- 49:  Para cada ciudad, suma los importes pagados por clientes que residen en esa ciudad.
 -- 50:  Para cada idioma, cuenta cuántos actores distintos participan en películas de ese idioma.
 -- 51:  Para cada tienda, cuenta cuántos clientes activos (active=1) tiene.
