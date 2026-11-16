@@ -231,11 +231,49 @@ GROUP BY s.store_id;
 -- SECCIÓN B) 30 CONSULTAS CON JOIN DE 3 TABLAS
 -- ==============================================
 -- 31:  Para cada actor, cuenta cuántas películas tiene y muestra solo los que superan 15 películas.
+SELECT a.actor_id, a.first_name, a.last_name, COUNT(fa.film_id) AS total_peliculas
+FROM actor a
+JOIN film_actor fa USING (actor_id)
+JOIN film f USING (film_id)
+GROUP BY a.actor_id
+HAVING COUNT(fa.film_id) > 15;
+
 -- 32:  Para cada categoría (por nombre), cuenta cuántas películas hay en esa categoría.
+SELECT c.name, COUNT(fc.film_id) AS total_peliculas
+FROM category c
+JOIN film_category fc USING (category_id)
+JOIN film f USING (film_id)
+GROUP BY c.category_id;
+
 -- 33:  Para cada película, cuenta cuántos alquileres se han hecho de sus copias.
+SELECT f.film_id, f.title, COUNT(r.rental_id) AS total_alquileres
+FROM film f
+JOIN inventory i USING (film_id)
+JOIN rental r USING (inventory_id)
+GROUP BY f.film_id;
+
 -- 34:  Para cada cliente, suma el importe pagado en 2005 y filtra clientes con total >= 150.
+SELECT c.customer_id, c.first_name, c.last_name, SUM(p.amount) AS total_pagado
+FROM customer c
+JOIN payment p USING (customer_id)
+WHERE YEAR(p.payment_date) = 2005
+GROUP BY c.customer_id
+HAVING SUM(p.amount) >= 150;
+
 -- 35:  Para cada tienda, suma el importe cobrado por todos sus empleados.
+SELECT s.store_id, SUM(p.amount) AS total_cobrado
+FROM store s
+JOIN staff st USING (store_id)
+JOIN payment p USING (staff_id)
+GROUP BY s.store_id;
+
 -- 36:  Para cada ciudad, cuenta cuántos empleados residen ahí (staff -> address -> city).
+SELECT ci.city_id, ci.city, COUNT(st.staff_id) AS total_empleados
+FROM city ci
+JOIN address a USING (city_id)
+JOIN staff st USING (address_id)
+GROUP BY ci.city_id;
+
 -- 37:  Para cada ciudad, cuenta cuántas tiendas existen (store -> address -> city).
 -- 38:  Para cada actor, calcula la duración media de sus películas del año 2006.
 -- 39:  Para cada categoría, calcula la duración media y muestra solo las que superan 120.
