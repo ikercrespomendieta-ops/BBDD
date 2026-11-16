@@ -362,12 +362,60 @@ JOIN film f USING (film_id)
 GROUP BY c.category_id;
 
 -- 49:  Para cada ciudad, suma los importes pagados por clientes que residen en esa ciudad.
+SELECT ci.city_id, ci.city, SUM(p.amount) AS total_pagado
+FROM city ci
+JOIN address a USING (city_id)
+JOIN customer c USING (address_id)
+JOIN payment p USING (customer_id)
+GROUP BY ci.city_id;
+
 -- 50:  Para cada idioma, cuenta cuántos actores distintos participan en películas de ese idioma.
+SELECT l.language_id, l.name, COUNT(DISTINCT fa.actor_id) AS total_actores
+FROM language l
+JOIN film f USING (language_id)
+JOIN film_actor fa USING (film_id)
+GROUP BY l.language_id;
+
 -- 51:  Para cada tienda, cuenta cuántos clientes activos (active=1) tiene.
+SELECT s.store_id, COUNT(c.customer_id) AS clientes_activos
+FROM store s
+JOIN customer c USING (store_id)
+JOIN address a USING (address_id)
+WHERE c.active = 1
+GROUP BY s.store_id;
+
 -- 52:  Para cada cliente, cuenta en cuántas categorías distintas ha alquilado (aprox. vía film_category; requiere 4 tablas, aquí contamos películas 2006 por inventario).
+SELECT c.customer_id, c.first_name, c.last_name, COUNT(DISTINCT fc.category_id) AS categorias_distintas
+FROM customer c
+JOIN rental r USING (customer_id)
+JOIN inventory i USING (inventory_id)
+JOIN film_category fc USING (film_id)
+GROUP BY c.customer_id;
+
 -- 53:  Para cada empleado, cuenta cuántos clientes diferentes le han pagado.
+SELECT st.staff_id, st.first_name, st.last_name, COUNT(DISTINCT p.customer_id) AS clientes_diferentes
+FROM staff st
+JOIN payment p USING (staff_id)
+GROUP BY st.staff_id;
+
 -- 54:  Para cada ciudad, cuenta cuántas películas del año 2006 han sido alquiladas por residentes en esa ciudad.
+SELECT ci.city_id, ci.city, COUNT(r.rental_id) AS total_alquileres
+FROM city ci
+JOIN address a USING (city_id)
+JOIN customer c USING (address_id)
+JOIN rental r USING (customer_id)
+JOIN inventory i USING (inventory_id)
+JOIN film f USING (film_id)
+WHERE f.release_year = 2006
+GROUP BY ci.city_id;
+
 -- 55:  Para cada categoría, calcula el promedio de replacement_cost de sus películas.
+SELECT c.category_id, c.name, AVG(f.replacement_cost) AS promedio_replacement_cost
+FROM category c
+JOIN film_category fc USING (category_id)
+JOIN film f USING (film_id)
+GROUP BY c.category_id;
+
 -- 56:  Para cada tienda, suma los importes cobrados en 2006 (vía empleados de esa tienda).
 -- 57:  Para cada actor, cuenta cuántas películas tienen título de más de 12 caracteres.
 -- 58:  Para cada ciudad, calcula la suma de pagos de 2005 y filtra las ciudades con total >= 300.
